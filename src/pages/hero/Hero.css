@@ -1,0 +1,562 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* ========================================
+   HERO
+======================================== */
+
+.hero {
+  width: 100%;
+  min-height: 620px;
+  margin: 0 auto;
+  padding: 40px 6%;
+  background-color: #f1f1f1;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: center;
+
+  overflow: hidden;
+
+  /* Keep the hero background here */
+  background-image: url("../../public/images/herobbg.png");
+  background-size: 65%;
+  background-repeat: no-repeat;
+  background-position: 85% 50px;
+
+  font-family: "Inter", sans-serif;
+}
+
+/* ========================================
+   HERO CONTENT
+======================================== */
+
+.hero-content {
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  align-items: center;
+
+  padding: 20px 0;
+
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text {
+  max-width: 560px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero-text h1,
+.hero-text p {
+  margin: 0;
+}
+
+.hero-text h1 {
+  max-width: 520px;
+
+  font-size: clamp(38px, 4vw, 58px);
+  line-height: 1.05;
+  font-weight: 750;
+
+  color: #000;
+}
+
+.hero-label {
+  width: fit-content;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+
+  color: #f59e0b;
+}
+
+.hero-text p {
+  max-width: 440px;
+
+  font-size: 16px;
+  line-height: 1.7;
+
+  color: #333;
+}
+
+.hero-stats {
+  margin-top: 4px;
+}
+
+.hero-stats span {
+  font-size: 13px;
+  color: #555;
+}
+
+/* ========================================
+   HERO IMAGE / RIGHT SIDE
+======================================== */
+
+.hero-image {
+  width: 100%;
+  height: 620px;
+
+  position: relative;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  /*
+    This only controls heroimage.png.
+    The main herobbg.png remains on .hero above.
+  */
+  background-image: url("../../public/images/heroimage.png");
+  background-size: 78%;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+
+  z-index: 1;
+}
+
+/* ========================================
+   ORBIT CONTAINER
+======================================== */
+
+.circular-animation {
+  position: absolute;
+
+  width: 560px;
+  height: 560px;
+
+  top: 25px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+/* Subtle orbit circle */
+
+.circular-animation::before {
+  content: "";
+
+  position: absolute;
+
+  width: 440px;
+  height: 440px;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  border-radius: 50%;
+}
+
+/* ========================================
+   ROTATING RING
+======================================== */
+
+.orbit-ring {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  animation: orbitSpin 28s linear infinite;
+}
+
+/* ========================================
+   ORBIT ITEMS
+======================================== */
+
+.orbit-item {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width: 115px;
+  height: 145px;
+
+  margin-left: -57.5px;
+  margin-top: -72.5px;
+
+  /*
+    Places each product around the circle
+    while keeping the product itself upright.
+  */
+  transform:
+    rotate(var(--angle))
+    translateY(-220px)
+    rotate(calc(var(--angle) * -1));
+}
+
+/* ========================================
+   PRODUCT CARD
+======================================== */
+
+.product-card {
+  width: 115px;
+
+  padding: 10px;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.1),
+    0 3px 8px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  transform: scale(0.92);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: scale(1);
+
+  box-shadow:
+    0 16px 35px rgba(0, 0, 0, 0.14),
+    0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* ========================================
+   PRODUCT IMAGE
+======================================== */
+
+.product-card img {
+  width: 95px;
+  height: 95px;
+
+  object-fit: cover;
+
+  border-radius: 11px;
+
+  display: block;
+}
+
+/* ========================================
+   PRODUCT INFO
+======================================== */
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.product-info span {
+  font-size: 10px;
+  color: #555;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-info strong {
+  font-size: 12px;
+  color: #111;
+}
+
+/* ========================================
+   ORBIT ANIMATION
+======================================== */
+
+@keyframes orbitSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   CATEGORIES
+======================================== */
+
+.categories-section {
+  padding: 0 6%;
+  margin-top: 25px;
+
+  font-family: "Inter", sans-serif;
+}
+
+.categories-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+.categories-header h2 {
+  margin: 0;
+
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.categories-header a {
+  color: #222;
+
+  text-decoration: none;
+
+  font-size: 14px;
+}
+
+.categories {
+  display: grid;
+
+  grid-template-columns: repeat(6, 1fr);
+
+  gap: 22px;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1000px) {
+  .hero {
+    grid-template-columns: 1fr;
+
+    min-height: auto;
+
+    padding: 60px 6% 30px;
+
+    text-align: center;
+
+    background-size: 90%;
+    background-position: center 25%;
+  }
+
+  .hero-content {
+    justify-content: center;
+  }
+
+  .hero-text {
+    align-items: center;
+
+    margin: 0 auto;
+  }
+
+  .hero-text p {
+    max-width: 500px;
+  }
+
+  .hero-image {
+    height: 580px;
+    min-height: 580px;
+
+    background-size: 65%;
+    background-position: center bottom;
+  }
+
+  .circular-animation {
+    width: 520px;
+    height: 520px;
+
+    top: 20px;
+  }
+
+  .circular-animation::before {
+    width: 410px;
+    height: 410px;
+  }
+
+  .orbit-item {
+    transform:
+      rotate(var(--angle))
+      translateY(-200px)
+      rotate(calc(var(--angle) * -1));
+  }
+
+  .benefits {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .categories {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 45px 20px 10px;
+
+    min-height: auto;
+
+    background-size: 120%;
+    background-position: center 25%;
+  }
+
+  .hero-text h1 {
+    font-size: 38px;
+  }
+
+  .hero-text p {
+    font-size: 14px;
+  }
+
+  .hero-image {
+    height: 470px;
+    min-height: 470px;
+
+    background-size: 72%;
+    background-position: center bottom;
+  }
+
+  .circular-animation {
+    width: 390px;
+    height: 390px;
+
+    top: 15px;
+  }
+
+  .circular-animation::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .orbit-item {
+    transform:
+      rotate(var(--angle))
+      translateY(-150px)
+      rotate(calc(var(--angle) * -1));
+  }
+
+  .product-card {
+    width: 90px;
+
+    padding: 8px;
+  }
+
+  .product-card img {
+    width: 74px;
+    height: 74px;
+  }
+
+  .benefits {
+    padding: 15px 20px;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+  }
+
+  .categories-section {
+    padding: 0 20px;
+  }
+
+  .categories {
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 420px) {
+  .hero {
+    padding: 40px 15px 5px;
+  }
+
+  .hero-text h1 {
+    font-size: 34px;
+  }
+
+  .hero-image {
+    height: 410px;
+    min-height: 410px;
+
+    background-size: 76%;
+    background-position: center bottom;
+  }
+
+  .circular-animation {
+    width: 340px;
+    height: 340px;
+
+    top: 10px;
+  }
+
+  .circular-animation::before {
+    width: 250px;
+    height: 250px;
+  }
+
+  .orbit-item {
+    width: 78px;
+    height: 110px;
+
+    margin-left: -39px;
+    margin-top: -55px;
+
+    transform:
+      rotate(var(--angle))
+      translateY(-125px)
+      rotate(calc(var(--angle) * -1));
+  }
+
+  .product-card {
+    width: 78px;
+
+    padding: 6px;
+
+    border-radius: 12px;
+  }
+
+  .product-card img {
+    width: 66px;
+    height: 66px;
+  }
+
+  .product-info span {
+    font-size: 8px;
+  }
+
+  .product-info strong {
+    font-size: 10px;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr;
+
+    text-align: center;
+  }
+
+  .categories {
+    grid-template-columns: 1fr;
+  }
+}

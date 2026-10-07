@@ -1,0 +1,28 @@
+.hero-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.shop-now {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 10px;
+    background-color: orange;
+    color: #fff;
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+
+}
+
+.explore-collection {
+    padding: 10px 20px;
+    color: #000;
+    background-color: #fff;
+    outline: none;
+    border: 1px solid #000;
+    border-radius: 10px;
+}

@@ -1,0 +1,123 @@
+.featured-products {
+  width: 100%;
+  padding: 55px 6% 0;
+
+  box-sizing: border-box;
+
+  font-family: "Inter", sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.featured-products-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 24px;
+}
+
+.featured-products-header > div {
+  max-width: 600px;
+}
+
+.section-eyebrow {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #4f46e5;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 1.2px;
+}
+
+.featured-products-header h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+}
+
+.featured-products-header p {
+  margin: 7px 0 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================
+   VIEW ALL
+========================= */
+
+.view-products-link {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding-bottom: 3px;
+
+  color: #172033;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  transition:
+    color 0.2s ease,
+    gap 0.2s ease;
+}
+
+.view-products-link:hover {
+  color: #4f46e5;
+  gap: 9px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+  .featured-products {
+    padding: 40px 20px 0;
+  }
+
+  .featured-products-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-bottom: 18px;
+  }
+
+  .featured-products-header h2 {
+    font-size: 21px;
+  }
+
+  .featured-products-header p {
+    font-size: 12px;
+  }
+
+  .view-products-link {
+    padding: 0;
+  }
+}

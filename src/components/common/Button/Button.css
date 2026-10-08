@@ -1,28 +1,57 @@
+.base-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.9rem;
+  padding: 0.82rem 1.3rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.base-button:hover {
+  transform: translateY(-1px);
+}
+
+.base-button.primary {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.2);
+}
+
+.base-button.secondary {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border-color: var(--color-border);
+}
+
 .hero-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-button-link {
+  text-decoration: none;
+}
+
+.shop-now,
+.explore-collection {
+  margin: 0;
 }
 
 .shop-now {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    border-radius: 10px;
-    background-color: orange;
-    color: #fff;
-    padding: 10px 20px;
-    outline: none;
-    border: none;
-
+  background: var(--color-primary) !important;
+  color: #fff !important;
 }
 
 .explore-collection {
-    padding: 10px 20px;
-    color: #000;
-    background-color: #fff;
-    outline: none;
-    border: 1px solid #000;
-    border-radius: 10px;
+  background: var(--color-surface) !important;
+  color: var(--color-primary) !important;
+  border-color: var(--color-border) !important;
 }

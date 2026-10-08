@@ -1,0 +1,17 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.empty-state h3 {
+  font-size: 1.4rem;
+}
+
+.empty-state p {
+  color: var(--color-text-muted);
+}

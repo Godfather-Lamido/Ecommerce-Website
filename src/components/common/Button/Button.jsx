@@ -1,17 +1,21 @@
-import { ArrowRight } from "lucide-react";
-import "./Button.css";
+import './Button.css';
 
-export function Button() {
+export default function Button({
+  children,
+  variant = 'primary',
+  type = 'button',
+  fullWidth = false,
+  className = '',
+  ...props
+}) {
   return (
-    <>
-      <div className="hero-buttons">
-          <button className="shop-now">
-            Shop Now
-            <ArrowRight />
-          </button>
-
-        <button className="explore-collection">Explore Collection</button>
-      </div>
-    </>
+    <button
+      type={type}
+      className={`base-button ${variant} ${fullWidth ? 'full-width' : ''} ${className}`.trim()}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
+

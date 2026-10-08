@@ -1,9 +1,10 @@
 import "./category.css";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export function Category({ image, title }) {
+export function Category({ image, title, slug }) {
   return (
-    <div className="category-card">
+    <Link to={`/category/${slug}`} className="category-card">
       <img src={image} alt={title} />
 
       <div className="category-gradient" />
@@ -18,6 +19,6 @@ export function Category({ image, title }) {
           <ArrowRight size={17} />
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

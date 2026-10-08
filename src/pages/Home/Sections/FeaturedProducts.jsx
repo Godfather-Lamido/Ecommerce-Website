@@ -1,12 +1,14 @@
 import { ArrowRight } from "lucide-react";
-// import products from "../../../data/product";
-// import ProductGrid from "../../../components/product/ProductGrid/ProductGrid";
+import { Link } from "react-router-dom";
+import { useProducts } from "../../../context/ProductContext";
+import ProductGrid from "../../../components/product/ProductGrid/ProductGrid";
 
 import "./FeaturedProducts.css";
 
 export default function FeaturedProducts() {
-  const featuredProducts = products
-    .filter((product) => product.isFeatured)
+  const { products, isLoading, error, reload } = useProducts();
+  const featuredProducts = [...products]
+    .sort((first, second) => second.rating - first.rating)
     .slice(0, 8);
 
   return (
@@ -25,13 +27,22 @@ export default function FeaturedProducts() {
           </p>
         </div>
 
-        <a href="/shop" className="view-products-link">
+        <Link to="/shop?sort=featured" className="view-products-link">
           View All
           <ArrowRight size={16} />
-        </a>
+        </Link>
       </div>
 
-      {/* <ProductGrid products={featuredProducts} /> */}
+      {error ? (
+        <div role="alert">
+          <p>Could not load products: {error}</p>
+          <button type="button" onClick={reload}>Try again</button>
+        </div>
+      ) : isLoading ? (
+        <p>Loading products…</p>
+      ) : (
+        <ProductGrid products={featuredProducts} />
+      )}
     </section>
   );
 }

@@ -11,6 +11,28 @@
   scroll-margin-top: 100px;
 }
 
+/* Category */
+.categories-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.categories-select-wrapper label {
+  font-weight: 600;
+}
+
+.categories-select-wrapper select {
+  min-width: 180px;
+  padding: 0.65rem 2.5rem 0.65rem 0.85rem;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  border-radius: 8px;
+  background: white;
+  font: inherit;
+  color: #111827;
+  cursor: pointer;
+}
+
 .filter-pill {
   display: inline-flex;
   align-items: center;

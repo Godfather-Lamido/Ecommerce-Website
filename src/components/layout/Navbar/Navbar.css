@@ -149,8 +149,7 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: red;
-    /* background: rgba(255, 255, 255, 0.98); */
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
     padding: 1.25rem 1rem 1.5rem;

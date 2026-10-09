@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/product/ProductCard/ProductCard';
 import ProductLoadMore from '../../components/product/ProductLoadMore';
 import { useProducts } from '../../context/ProductContext';
@@ -8,6 +8,7 @@ import './Shop.css';
 export default function ShopPage() {
   const { categorySlug } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const sortBy = searchParams.get('sort') ?? 'featured';
   const {
@@ -58,7 +59,42 @@ export default function ShopPage() {
         </p>
       </header>
 
-      <div id="categories" className="shop-filters" aria-label="Product categories">
+      <div id="categories" className="categories-select-wrapper">
+        <label htmlFor="category-select">Category</label>
+
+        <select
+          id='category-select'
+          value={categorySlug ?? ''}
+          onChange={(event) => {
+            const value = event.target.value;
+
+            console.log("cateogry selected: ", value)
+
+            console.log("Categories :", categories)
+
+            const cateogorySelected = categories.find((item) => item.slug === value);
+
+            console.log("category object: ", cateogorySelected)
+
+            if (value === '') {
+              navigate('/shop');
+            } else {
+              navigate(`/category/${cateogorySelected.slug}`);
+            }
+          }}
+        >
+          <option value="">All products</option>
+
+          {categories.map((category) => (
+            <option key={category.slug} value={category.slug}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div> 
+
+ 
+      {/* <div id="categories" className="shop-filters" aria-label="Product categories">
         <Link to="/shop" className={categorySlug ? 'filter-pill' : 'filter-pill active'}>
           All products
         </Link>
@@ -71,7 +107,7 @@ export default function ShopPage() {
             {category.name}
           </Link>
         ))}
-      </div>
+      </div>  */}
 
       <div className="search-toolbar">
         <div className="search-summary">

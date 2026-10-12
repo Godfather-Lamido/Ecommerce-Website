@@ -1,0 +1,20 @@
+.field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.input-error {
+  border: 1px solid red;
+}
+
+.field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.input-error {
+  border: 1px solid #dc2626;
+}
+

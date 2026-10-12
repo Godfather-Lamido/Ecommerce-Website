@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { formatPrice } from '../../data/products';
+import PaystackPop from '@paystack/inline-js';
 import './Payment.css';
 
 export default function PaymentPage() {
   const { subtotal, items, clearCart } = useCart();
+  const publicKey =  "pk_test_8e1141d1c26ae2d47237494586093d3d396e3610"
 
   const handleSubmit = () => {
     clearCart();

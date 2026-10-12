@@ -3,6 +3,7 @@ import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
+import { CheckoutProvider } from './context/CheckoutContext';
 import Navbar from './components/layout/Navbar/Navbar';
 import Footer from './components/layout/Footer/Footer';
 import HomePage from './pages/Home/Home';
@@ -54,7 +55,9 @@ export default function App() {
       <ProductProvider>
         <CartProvider>
           <WishlistProvider>
-            <AppShell />
+            <CheckoutProvider>
+              <AppShell />
+            </CheckoutProvider>
           </WishlistProvider>
         </CartProvider>
       </ProductProvider>

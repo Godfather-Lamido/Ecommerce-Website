@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/product/ProductCard/ProductCard';
 import ProductLoadMore from '../../components/product/ProductLoadMore';
 import { useProducts } from '../../context/ProductContext';
+import ReactPaginate from 'react-paginate';
 import './Shop.css';
 
 export default function ShopPage() {
@@ -15,13 +16,14 @@ export default function ShopPage() {
     products,
     categories,
     isLoading,
-    isLoadingMore,
+    // isLoadingMore,
     error,
-    loadMoreError,
-    hasMore,
-    loadMore,
+    // loadMoreError,
+    // hasMore,
+    // loadMore,
     reload,
   } = useProducts();
+    const [ pageNumber, setPageNumber ] = useState(0)
 
   useEffect(() => {
     if (location.hash === '#categories') {
@@ -41,12 +43,26 @@ export default function ShopPage() {
     return filtered.sort((a, b) => b.rating - a.rating);
   }, [categorySlug, products, sortBy]);
 
+  const productsPerPage = 10
+  const pageVisited = pageNumber * productsPerPage;
+  const displayProducts = filteredProducts.slice(
+    pageVisited, 
+    pageVisited + productsPerPage
+  );
+
+  const pageCount = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const changePage = ({ selected }) => {
+  setPageNumber(selected);
+};
+
   const handleSortChange = (event) => {
     const nextParams = new URLSearchParams(searchParams);
     if (event.target.value === 'featured') nextParams.delete('sort');
     else nextParams.set('sort', event.target.value);
     setSearchParams(nextParams);
   };
+
 
   return (
     <div className="shop-page">
@@ -92,7 +108,6 @@ export default function ShopPage() {
           ))}
         </select>
       </div> 
-
  
       {/* <div id="categories" className="shop-filters" aria-label="Product categories">
         <Link to="/shop" className={categorySlug ? 'filter-pill' : 'filter-pill active'}>
@@ -132,10 +147,11 @@ export default function ShopPage() {
         </div>
       ) : filteredProducts.length ? (
         <div className="product-grid">
-          {filteredProducts.map((product) => (
+          {displayProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
       ) : !isLoading ? (
         <div className="empty-state-card">
           <h2>No products in this category yet.</h2>
@@ -143,12 +159,24 @@ export default function ShopPage() {
         </div>
       ) : null}
 
-      <ProductLoadMore
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={"paginationBtnns"}
+          previousLinkClassName="pagination-link"
+          nextLinkClassName="pagination-link"
+          disabledClassName={"pagination-disabled"}
+          activeClassName="pagination-active"
+        />
+
+      {/* <ProductLoadMore
         hasMore={hasMore}
         isLoading={isLoadingMore}
         error={loadMoreError}
         onLoadMore={loadMore}
-      />
+      /> */}
     </div>
   );
 }

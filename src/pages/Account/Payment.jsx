@@ -56,9 +56,9 @@ export default function PaymentPage() {
             <span>Total</span>
             <strong>{formatPrice(subtotal, items[0]?.currency)}</strong>
           </div>
-          <Link to="/order-success/ORD-1001" className="primary-btn large-btn full-width" onClick={handleSubmit}>
+          <div className="primary-btn large-btn full-width" onClick={handleSubmit}>
             Pay now
-          </Link>
+          </div>
         </aside>
       </div>
     </div>

@@ -5,7 +5,7 @@ import ProductLoadMore from '../../components/product/ProductLoadMore';
 import { fetchProducts, searchProducts } from '../../data/products';
 import './Search.css';
 
-const PAGE_SIZE = 40;
+const PAGE_SIZE = 100;
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();

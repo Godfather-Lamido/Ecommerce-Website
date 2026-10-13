@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { fetchProductCategories, fetchProducts } from '../data/products';
 
 const ProductContext = createContext(null);
-const PAGE_SIZE = 40;
+const PAGE_SIZE = 100;
 
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);

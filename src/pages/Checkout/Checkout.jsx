@@ -34,7 +34,7 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    if (!isLoaded) {
+    if (!isLoaded) {  
       return;
     }
     localStorage.setItem("customer", JSON.stringify(userInfo));

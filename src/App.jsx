@@ -19,6 +19,7 @@ import AboutPage from './pages/About/About';
 import ContactPage from './pages/Contact/Contact';
 import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
+import ForgotPasswordPage from './pages/ForgotPassword/ForgotPassword';
 import AccountPage from './pages/Account/Account';
 
 function AppShell() {
@@ -41,6 +42,7 @@ function AppShell() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/account/*" element={<AccountPage />} />
         </Routes>
       </main>

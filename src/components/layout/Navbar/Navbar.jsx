@@ -10,7 +10,7 @@ const navItems = [
   { label: "Shop", to: "/shop" },
   { label: "Best Sellers", to: "/shop?sort=popular" },
   // { label: 'About', to: '/about' },
-  // { label: 'Contact', to: '/contact' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 export default function Navbar() {

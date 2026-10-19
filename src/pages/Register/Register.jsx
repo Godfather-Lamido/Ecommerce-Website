@@ -1,10 +1,13 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
+
 import AuthLayout from '../../components/auth/AuthLayout';
 import { useAuth } from '../../context/AuthContext';
-import { isValidEmail } from '../../utils/validation'
-import './Register.css';
+import { isValidEmail } from '../../utils/validation';
 
+import './Register.css';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -17,29 +20,21 @@ export default function RegisterPage() {
     confirmPassword: '',
   });
 
-  const [touched, setTouched] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
 
+  const [touched, setTouched] = useState({});
+  const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
 
-  function handleChange(event) {
-    const { name, value } = event.target;
+  const fullName = userInfo.fullName.trim();
+  const email = userInfo.email.trim();
 
-    setUserInfo((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
+  const isNameEmpty = fullName === '';
+  const isEmailEmpty = email === '';
+  const isEmailValid = isValidEmail(email);
 
-    setTouched((previous) => ({
-      ...previous,
-      [name]: true,
-    }));
-
-    setMessage('');
-  }
-
-  const isNameEmpty = userInfo.fullName.trim() === '';
-  const isEmailEmpty = userInfo.email.trim() === '';
-  const isEmailValid = isValidEmail(userInfo.email);
   const isPasswordEmpty = userInfo.password === '';
   const isPasswordValid = userInfo.password.length >= 8;
 
@@ -48,6 +43,12 @@ export default function RegisterPage() {
 
   const passwordsMatch =
     userInfo.password === userInfo.confirmPassword;
+
+  const showNameError = submitted || touched.fullName;
+  const showEmailError = submitted || touched.email;
+  const showPasswordError = submitted || touched.password;
+  const showConfirmPasswordError =
+    submitted || touched.confirmPassword;
 
   const isFormValid =
     !isNameEmpty &&
@@ -58,8 +59,31 @@ export default function RegisterPage() {
     !isConfirmPasswordEmpty &&
     passwordsMatch;
 
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setUserInfo((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+
+    setMessage('');
+  }
+
+  function handleBlur(event) {
+    const { name } = event.target;
+
+    setTouched((previous) => ({
+      ...previous,
+      [name]: true,
+    }));
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
+
+    setSubmitted(true);
+    setMessage('');
 
     setTouched({
       fullName: true,
@@ -73,13 +97,15 @@ export default function RegisterPage() {
     }
 
     const result = register({
-      fullName: userInfo.fullName.trim(),
-      email: userInfo.email.trim(),
+      fullName,
+      email,
       password: userInfo.password,
     });
 
     if (!result.success) {
-      setMessage(result.message);
+      setMessage(
+        result.message || 'Unable to create your account. Please try again.'
+      );
       return;
     }
 
@@ -89,7 +115,6 @@ export default function RegisterPage() {
   return (
     <AuthLayout>
       <div className="auth-content">
-
         <div className="auth-heading">
           <h1>Create your account</h1>
           <p>
@@ -100,126 +125,241 @@ export default function RegisterPage() {
         <form
           className="auth-form"
           onSubmit={handleSubmit}
+          noValidate
         >
+          <label className="auth-field">
+            <span>Full name</span>
 
-          <label>
-            Full name
             <input
               type="text"
               name="fullName"
               value={userInfo.fullName}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Your full name"
+              autoComplete="name"
+              aria-invalid={showNameError && isNameEmpty}
+              aria-describedby={
+                showNameError && isNameEmpty
+                  ? 'register-name-error'
+                  : undefined
+              }
               className={
-                touched.fullName && isNameEmpty
+                showNameError && isNameEmpty
                   ? 'input-error'
                   : ''
               }
             />
 
-            {touched.fullName && isNameEmpty && (
-              <span className="field-error">
+            {showNameError && isNameEmpty && (
+              <span
+                id="register-name-error"
+                className="field-error"
+              >
                 Full name is required.
               </span>
             )}
           </label>
 
-          <label>
-            Email
+          <label className="auth-field">
+            <span>Email</span>
+
             <input
               type="email"
               name="email"
               value={userInfo.email}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="you@example.com"
+              autoComplete="email"
+              aria-invalid={
+                showEmailError &&
+                (isEmailEmpty || !isEmailValid)
+              }
+              aria-describedby={
+                showEmailError &&
+                (isEmailEmpty || !isEmailValid)
+                  ? 'register-email-error'
+                  : undefined
+              }
               className={
-                touched.email &&
+                showEmailError &&
                 (isEmailEmpty || !isEmailValid)
                   ? 'input-error'
                   : ''
               }
             />
 
-            {touched.email && isEmailEmpty && (
-              <span className="field-error">
+            {showEmailError && isEmailEmpty && (
+              <span
+                id="register-email-error"
+                className="field-error"
+              >
                 Email is required.
               </span>
             )}
 
-            {touched.email &&
+            {showEmailError &&
               !isEmailEmpty &&
               !isEmailValid && (
-                <span className="field-error">
+                <span
+                  id="register-email-error"
+                  className="field-error"
+                >
                   Enter a valid email address.
                 </span>
               )}
           </label>
 
-          <label>
-            Password
-            <input
-              type="password"
-              name="password"
-              value={userInfo.password}
-              onChange={handleChange}
-              placeholder="At least 8 characters"
-              className={
-                touched.password &&
-                (isPasswordEmpty || !isPasswordValid)
-                  ? 'input-error'
-                  : ''
-              }
-            />
+          <label className="auth-field">
+            <span>Password</span>
 
-            {touched.password && isPasswordEmpty && (
-              <span className="field-error">
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={userInfo.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+                aria-invalid={
+                  showPasswordError &&
+                  (isPasswordEmpty || !isPasswordValid)
+                }
+                aria-describedby={
+                  showPasswordError &&
+                  (isPasswordEmpty || !isPasswordValid)
+                    ? 'register-password-error'
+                    : undefined
+                }
+                className={
+                  showPasswordError &&
+                  (isPasswordEmpty || !isPasswordValid)
+                    ? 'input-error'
+                    : ''
+                }
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() =>
+                  setShowPassword((previous) => !previous)
+                }
+                aria-label={
+                  showPassword ? 'Hide password' : 'Show password'
+                }
+                aria-pressed={showPassword}
+              >
+                {showPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
+
+            {showPasswordError && isPasswordEmpty && (
+              <span
+                id="register-password-error"
+                className="field-error"
+              >
                 Password is required.
               </span>
             )}
 
-            {touched.password &&
+            {showPasswordError &&
               !isPasswordEmpty &&
               !isPasswordValid && (
-                <span className="field-error">
+                <span
+                  id="register-password-error"
+                  className="field-error"
+                >
                   Password must be at least 8 characters.
                 </span>
               )}
           </label>
 
-          <label>
-            Confirm password
-            <input
-              type="password"
-              name="confirmPassword"
-              value={userInfo.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm your password"
-              className={
-                touched.confirmPassword &&
-                (isConfirmPasswordEmpty || !passwordsMatch)
-                  ? 'input-error'
-                  : ''
-              }
-            />
+          <label className="auth-field">
+            <span>Confirm password</span>
 
-            {touched.confirmPassword &&
+            <div className="password-input-wrapper">
+              <input
+                type={
+                  showConfirmPassword ? 'text' : 'password'
+                }
+                name="confirmPassword"
+                value={userInfo.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+                aria-invalid={
+                  showConfirmPasswordError &&
+                  (isConfirmPasswordEmpty || !passwordsMatch)
+                }
+                aria-describedby={
+                  showConfirmPasswordError &&
+                  (isConfirmPasswordEmpty || !passwordsMatch)
+                    ? 'register-confirm-password-error'
+                    : undefined
+                }
+                className={
+                  showConfirmPasswordError &&
+                  (isConfirmPasswordEmpty || !passwordsMatch)
+                    ? 'input-error'
+                    : ''
+                }
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() =>
+                  setShowConfirmPassword(
+                    (previous) => !previous
+                  )
+                }
+                aria-label={
+                  showConfirmPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                }
+                aria-pressed={showConfirmPassword}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
+
+            {showConfirmPasswordError &&
               isConfirmPasswordEmpty && (
-                <span className="field-error">
+                <span
+                  id="register-confirm-password-error"
+                  className="field-error"
+                >
                   Please confirm your password.
                 </span>
               )}
 
-            {touched.confirmPassword &&
+            {showConfirmPasswordError &&
               !isConfirmPasswordEmpty &&
               !passwordsMatch && (
-                <span className="field-error">
+                <span
+                  id="register-confirm-password-error"
+                  className="field-error"
+                >
                   Passwords do not match.
                 </span>
               )}
           </label>
 
           {message && (
-            <p className="auth-message">
+            <p className="auth-message" role="alert">
               {message}
             </p>
           )}
@@ -230,18 +370,13 @@ export default function RegisterPage() {
           >
             Create account
           </button>
-
         </form>
 
         <p className="auth-link">
           Already have an account?{' '}
-          <Link to="/login">
-            Log in
-          </Link>
+          <Link to="/login">Log in</Link>
         </p>
-
       </div>
     </AuthLayout>
   );
 }
-

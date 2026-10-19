@@ -52,11 +52,11 @@ export function AuthProvider({ children }) {
     const registeredUser = JSON.parse(savedUser);
 
     if (
-      registeredUser.email.toLowerCase() ===
-      email.toLowerCase()
-    ) {
+      registeredUser.email.toLowerCase() !==
+        email.toLowerCase()
+      ) {
       return {
-        success: true,
+        success: false,
         message: 'Incorrect email or password.',
       };
     }

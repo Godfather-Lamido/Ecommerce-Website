@@ -1,9 +1,12 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
+
 import AuthLayout from '../../components/auth/AuthLayout';
 import { useAuth } from '../../context/AuthContext';
 import { isValidEmail } from '../../utils/validation';
+
 import './Login.css';
 
 export default function LoginPage() {
@@ -15,16 +18,18 @@ export default function LoginPage() {
     password: '',
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
   const [authFailed, setAuthFailed] = useState(false);
 
-  const isEmailEmpty = userInfo.email.trim() === '';
+  const email = userInfo.email.trim();
 
-  const isEmailValid = isValidEmail(userInfo.email);
-
+  const isEmailEmpty = email === '';
+  const isEmailValid = isValidEmail(email);
   const isPasswordEmpty = userInfo.password === '';
+
   const showEmailError = submitted || touched.email;
   const showPasswordError = submitted || touched.password;
 
@@ -62,22 +67,17 @@ export default function LoginPage() {
     setMessage('');
     setAuthFailed(false);
 
-    if (
-      isEmailEmpty ||
-      !isEmailValid ||
-      isPasswordEmpty
-    ) {
+    if (isEmailEmpty || !isEmailValid || isPasswordEmpty) {
       return;
     }
 
-    const result = login(
-      userInfo.email.trim(),
-      userInfo.password
-    );
+    const result = login(email, userInfo.password);
 
     if (!result.success) {
       setAuthFailed(true);
-      setMessage('Email or password is incorrect.');
+      setMessage(
+        result.message || 'Email or password is incorrect.'
+      );
       return;
     }
 
@@ -99,8 +99,8 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           noValidate
         >
-          <label>
-            Email
+          <label className="auth-field">
+            <span>Email</span>
 
             <input
               type="email"
@@ -146,33 +146,53 @@ export default function LoginPage() {
               )}
           </label>
 
-          <label>
-            Password
+          <label className="auth-field">
+            <span>Password</span>
 
-            <input
-              type="password"
-              name="password"
-              value={userInfo.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              aria-invalid={
-                passwordHasError || authFailed
-              }
-              aria-describedby={
-                passwordHasError
-                  ? 'login-password-error'
-                  : authFailed
-                    ? 'login-auth-error'
-                    : undefined
-              }
-              className={
-                passwordHasError || authFailed
-                  ? 'input-error'
-                  : ''
-              }
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={userInfo.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                aria-invalid={
+                  passwordHasError || authFailed
+                }
+                aria-describedby={
+                  passwordHasError
+                    ? 'login-password-error'
+                    : authFailed
+                      ? 'login-auth-error'
+                      : undefined
+                }
+                className={
+                  passwordHasError || authFailed
+                    ? 'input-error'
+                    : ''
+                }
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() =>
+                  setShowPassword((previous) => !previous)
+                }
+                aria-label={
+                  showPassword ? 'Hide password' : 'Show password'
+                }
+                aria-pressed={showPassword}
+              >
+                {showPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
 
             {showPasswordError && isPasswordEmpty && (
               <span
@@ -210,9 +230,7 @@ export default function LoginPage() {
 
         <p className="auth-link">
           Don't have an account?{' '}
-          <Link to="/register">
-            Create one
-          </Link>
+          <Link to="/register">Create one</Link>
         </p>
       </div>
     </AuthLayout>

@@ -21,6 +21,7 @@ import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
 import ForgotPasswordPage from './pages/ForgotPassword/ForgotPassword';
 import AccountPage from './pages/Account/Account';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function AppShell() {
   return (
@@ -34,8 +35,8 @@ function AppShell() {
           <Route path="/product/:productId" element={<ProductDetailsPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/checkout" element={ <ProtectedRoute> <CheckoutPage/> </ProtectedRoute>} />
+          <Route path="/payment" element={<ProtectedRoute> <PaymentPage /> </ProtectedRoute>}/>
           <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
           <Route path="/track-order" element={<TrackOrderPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -43,7 +44,7 @@ function AppShell() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/account/*" element={<AccountPage />} />
+          <Route path="/account/*" element={ <ProtectedRoute> <AccountPage /> </ProtectedRoute>}/>
         </Routes>
       </main>
       <Footer />

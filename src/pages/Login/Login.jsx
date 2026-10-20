@@ -1,7 +1,10 @@
-
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 
 import AuthLayout from '../../components/auth/AuthLayout';
 import { useAuth } from '../../context/AuthContext';
@@ -11,6 +14,7 @@ import './Login.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   const [userInfo, setUserInfo] = useState({
@@ -81,7 +85,12 @@ export default function LoginPage() {
       return;
     }
 
-    navigate('/account');
+    const destination = location.state?.from;
+
+    navigate(
+      destination?.pathname ? destination : '/account',
+      { replace: true }
+    );
   }
 
   return (
@@ -179,10 +188,14 @@ export default function LoginPage() {
                 type="button"
                 className="password-toggle"
                 onClick={() =>
-                  setShowPassword((previous) => !previous)
+                  setShowPassword(
+                    (previous) => !previous
+                  )
                 }
                 aria-label={
-                  showPassword ? 'Hide password' : 'Show password'
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
                 }
                 aria-pressed={showPassword}
               >
@@ -230,7 +243,16 @@ export default function LoginPage() {
 
         <p className="auth-link">
           Don't have an account?{' '}
-          <Link to="/register">Create one</Link>
+          <Link
+            to="/register"
+            state={
+              location.state?.from
+                ? { from: location.state.from }
+                : undefined
+            }
+          >
+            Create one
+          </Link>
         </p>
       </div>
     </AuthLayout>

@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 
 import AuthLayout from '../../components/auth/AuthLayout';
@@ -11,6 +10,7 @@ import './Register.css';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register } = useAuth();
 
   const [userInfo, setUserInfo] = useState({
@@ -104,12 +104,18 @@ export default function RegisterPage() {
 
     if (!result.success) {
       setMessage(
-        result.message || 'Unable to create your account. Please try again.'
+        result.message ||
+          'Unable to create your account. Please try again.'
       );
       return;
     }
 
-    navigate('/login');
+    const destination = location.state?.from;
+
+    navigate(
+      destination?.pathname ? destination : '/account',
+      { replace: true }
+    );
   }
 
   return (
@@ -245,10 +251,14 @@ export default function RegisterPage() {
                 type="button"
                 className="password-toggle"
                 onClick={() =>
-                  setShowPassword((previous) => !previous)
+                  setShowPassword(
+                    (previous) => !previous
+                  )
                 }
                 aria-label={
-                  showPassword ? 'Hide password' : 'Show password'
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
                 }
                 aria-pressed={showPassword}
               >
@@ -287,7 +297,9 @@ export default function RegisterPage() {
             <div className="password-input-wrapper">
               <input
                 type={
-                  showConfirmPassword ? 'text' : 'password'
+                  showConfirmPassword
+                    ? 'text'
+                    : 'password'
                 }
                 name="confirmPassword"
                 value={userInfo.confirmPassword}
@@ -374,7 +386,16 @@ export default function RegisterPage() {
 
         <p className="auth-link">
           Already have an account?{' '}
-          <Link to="/login">Log in</Link>
+          <Link
+            to="/login"
+            state={
+              location.state?.from
+                ? { from: location.state.from }
+                : undefined
+            }
+          >
+            Log in
+          </Link>
         </p>
       </div>
     </AuthLayout>

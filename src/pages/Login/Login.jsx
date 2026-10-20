@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import {
@@ -12,16 +13,17 @@ import { isValidEmail } from '../../utils/validation';
 
 import './Login.css';
 
+const EMPTY_FORM = {
+  email: '',
+  password: '',
+};
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
 
-  const [userInfo, setUserInfo] = useState({
-    email: '',
-    password: '',
-  });
-
+  const [userInfo, setUserInfo] = useState({ ...EMPTY_FORM });
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -87,6 +89,12 @@ export default function LoginPage() {
 
     const destination = location.state?.from;
 
+    // Clear the form before leaving the login page.
+    setUserInfo({ ...EMPTY_FORM });
+    setShowPassword(false);
+    setTouched({});
+    setSubmitted(false);
+
     navigate(
       destination?.pathname ? destination : '/account',
       { replace: true }
@@ -107,6 +115,7 @@ export default function LoginPage() {
           className="auth-form"
           onSubmit={handleSubmit}
           noValidate
+          autoComplete="off"
         >
           <label className="auth-field">
             <span>Email</span>
@@ -118,7 +127,7 @@ export default function LoginPage() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="user@example.com"
-              autoComplete="email"
+              autoComplete="off"
               aria-invalid={emailHasError || authFailed}
               aria-describedby={
                 emailHasError
@@ -166,7 +175,7 @@ export default function LoginPage() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Enter your password"
-                autoComplete="current-password"
+                autoComplete="off"
                 aria-invalid={
                   passwordHasError || authFailed
                 }
@@ -188,9 +197,7 @@ export default function LoginPage() {
                 type="button"
                 className="password-toggle"
                 onClick={() =>
-                  setShowPassword(
-                    (previous) => !previous
-                  )
+                  setShowPassword((previous) => !previous)
                 }
                 aria-label={
                   showPassword

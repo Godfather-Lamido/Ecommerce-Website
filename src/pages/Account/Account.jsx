@@ -1,5 +1,7 @@
+
 import { useEffect, useMemo, useState } from 'react';
-import { Link, NavLink, Route, Routes } from 'react-router-dom';
+import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useProducts } from '../../context/ProductContext';
 import { fetchProductById, formatPrice } from '../../data/products';
@@ -17,13 +19,12 @@ function AccountOverview() {
           <h2>Shop smarter, your way.</h2>
 
           <p>
-            Keep track of your favorites, orders, and shopping activity
-            all in one place.
+            Keep track of your favorites, orders, and shopping
+            activity all in one place.
           </p>
 
           <Link to="/shop" className="account-primary-btn">
-            Continue shopping
-            <span aria-hidden="true">→</span>
+            Continue shopping <span aria-hidden="true">→</span>
           </Link>
         </div>
 
@@ -48,7 +49,9 @@ function AccountOverview() {
         <div className="stat-card">
           <span className="stat-label">Account</span>
           <strong>Active</strong>
-          <span className="stat-description">Everything looks good</span>
+          <span className="stat-description">
+            Everything looks good
+          </span>
         </div>
       </div>
 
@@ -70,7 +73,8 @@ function AccountOverview() {
           <div>
             <h4>No orders yet</h4>
             <p>
-              Your recent orders will appear here once you make a purchase.
+              Your recent orders will appear here once you make
+              a purchase.
             </p>
           </div>
         </div>
@@ -93,20 +97,27 @@ function AccountOverview() {
 function WishlistView() {
   const { items } = useWishlist();
   const { products } = useProducts();
+
   const [fetchedProducts, setFetchedProducts] = useState([]);
   const [error, setError] = useState('');
 
   const catalogProducts = useMemo(
-    () => new Map(products.map((product) => [String(product.id), product])),
-    [products],
+    () =>
+      new Map(
+        products.map((product) => [
+          String(product.id),
+          product,
+        ])
+      ),
+    [products]
   );
 
   useEffect(() => {
     const missingIds = items.filter(
-      (id) => !catalogProducts.has(String(id)),
+      (id) => !catalogProducts.has(String(id))
     );
 
-    if (!missingIds.length) {
+    if (missingIds.length === 0) {
       setFetchedProducts([]);
       setError('');
       return undefined;
@@ -116,17 +127,18 @@ function WishlistView() {
 
     Promise.all(
       missingIds.map((id) =>
-        fetchProductById(id, { signal: controller.signal }),
-      ),
+        fetchProductById(id, { signal: controller.signal })
+      )
     )
       .then((results) => {
         setFetchedProducts(results);
+        setError('');
       })
       .catch((requestError) => {
         if (requestError.code !== 'ERR_CANCELED') {
           setError(
             requestError.message ||
-              'Could not load all saved products.',
+              'Could not load all saved products.'
           );
         }
       });
@@ -139,8 +151,8 @@ function WishlistView() {
       (id) =>
         catalogProducts.get(String(id)) ??
         fetchedProducts.find(
-          (product) => String(product.id) === String(id),
-        ),
+          (product) => String(product.id) === String(id)
+        )
     )
     .filter(Boolean);
 
@@ -163,14 +175,14 @@ function WishlistView() {
       {items.length === 0 ? (
         <div className="panel-empty">
           <h3>Your wishlist is empty.</h3>
+
           <p>
             Save products you love and come back to them whenever
             you're ready.
           </p>
 
           <Link to="/shop" className="account-primary-btn">
-            Explore products
-            <span aria-hidden="true">→</span>
+            Explore products <span aria-hidden="true">→</span>
           </Link>
         </div>
       ) : savedProducts.length === 0 && !error ? (
@@ -181,13 +193,19 @@ function WishlistView() {
         <div className="wishlist-grid">
           {savedProducts.map((product) => (
             <div key={product.id} className="wishlist-item">
-              <img src={product.image} alt={product.name} />
+              <img
+                src={product.image}
+                alt={product.name}
+              />
 
               <div className="wishlist-info">
                 <strong>{product.name}</strong>
 
                 <span>
-                  {formatPrice(product.price, product.currency)}
+                  {formatPrice(
+                    product.price,
+                    product.currency
+                  )}
                 </span>
               </div>
 
@@ -220,13 +238,12 @@ function OrdersView() {
         <h3>No orders yet.</h3>
 
         <p>
-          Once you place an order, you’ll be able to track it from
-          here.
+          Once you place an order, you’ll be able to track it
+          from here.
         </p>
 
         <Link to="/shop" className="account-primary-btn">
-          Start shopping
-          <span aria-hidden="true">→</span>
+          Start shopping <span aria-hidden="true">→</span>
         </Link>
       </div>
     </div>
@@ -234,27 +251,39 @@ function OrdersView() {
 }
 
 export default function AccountPage() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
   const tabs = [
     { label: 'Overview', to: '/account' },
     { label: 'Wishlist', to: '/account/wishlist' },
     { label: 'Orders', to: '/account/orders' },
   ];
 
+  function handleLogout() {
+    logout();
+    navigate('/login', { replace: true });
+  }
+
   return (
     <div className="page-shell account-page">
       <header className="account-header">
         <span className="section-label">ACCOUNT</span>
 
-        <h1>Welcome back 👋</h1>
+        <h1>
+          Welcome back
+          {user?.fullName ? `, ${user.fullName}` : ''} 👋
+        </h1>
 
-        <p>
-          Manage your E-Sharp experience in one place.
-        </p>
+        <p>Manage your E-Sharp experience in one place.</p>
       </header>
 
       <div className="account-shell">
         <aside className="account-sidebar">
-          <nav className="account-navigation" aria-label="Account navigation">
+          <nav
+            className="account-navigation"
+            aria-label="Account navigation"
+          >
             {tabs.map((tab) => (
               <NavLink
                 key={tab.to}
@@ -271,16 +300,31 @@ export default function AccountPage() {
             ))}
           </nav>
 
-          <Link to="/login" className="account-logout">
+          <button
+            type="button"
+            className="account-logout"
+            onClick={handleLogout}
+          >
             Log out
-          </Link>
+          </button>
         </aside>
 
         <main className="account-content">
           <Routes>
-            <Route index element={<AccountOverview />} />
-            <Route path="wishlist" element={<WishlistView />} />
-            <Route path="orders" element={<OrdersView />} />
+            <Route
+              index
+              element={<AccountOverview />}
+            />
+
+            <Route
+              path="wishlist"
+              element={<WishlistView />}
+            />
+
+            <Route
+              path="orders"
+              element={<OrdersView />}
+            />
           </Routes>
         </main>
       </div>

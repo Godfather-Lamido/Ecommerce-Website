@@ -3,13 +3,13 @@ import { formatPrice } from "../../data/products";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "../../context/CheckoutContext";
-import { isValidEmail } from "../../utils/validation";
+import { useAuth } from "../../context/AuthContext";
 import "./Checkout.css";
-
 
 export default function CheckoutPage() {
   const { subtotal, items } = useCart();
   const { setCustomer } = useCheckout();
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -28,17 +28,30 @@ export default function CheckoutPage() {
 
   const [submitted, setSubmitted] = useState(false);
 
-
   useEffect(() => {
     const savedCustomer = localStorage.getItem("customer");
 
-    if (savedCustomer) {
-      setUserInfo(JSON.parse(savedCustomer));
+    if (user) {
+      setUserInfo({
+        fullName: user.fullName || "",
+        email: user.email || "",
+        phone: savedCustomer
+          ? JSON.parse(savedCustomer).phone || ""
+          : "",
+        address: savedCustomer
+          ? JSON.parse(savedCustomer).address || ""
+          : "",
+        city: savedCustomer
+          ? JSON.parse(savedCustomer).city || ""
+          : "",
+        state: savedCustomer
+          ? JSON.parse(savedCustomer).state || ""
+          : "",
+      });
     }
 
     setIsLoaded(true);
-  }, []);
-
+  }, [user]);
 
   useEffect(() => {
     if (!isLoaded) {
@@ -51,7 +64,6 @@ export default function CheckoutPage() {
     );
   }, [userInfo, isLoaded]);
 
-
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -60,7 +72,6 @@ export default function CheckoutPage() {
       [name]: value,
     }));
   }
-
 
   function handleBlur(event) {
     const { name } = event.target;
@@ -71,32 +82,30 @@ export default function CheckoutPage() {
     }));
   }
 
-
   const isFieldEmpty = (field) =>
     userInfo[field].trim() === "";
 
-
-  const isEmailValid =
-    isValidEmail(userInfo.email);
-
+  const isEmailValid = userInfo.email
+    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email)
+    : false;
 
   const isPhoneValid =
     /^(?:\+234|0)[789]\d{9}$/.test(
       userInfo.phone.replace(/\s/g, "")
     );
 
-
   const isFormValid =
-    Object.values(userInfo).every(
-      (value) => value.trim() !== ""
-    ) &&
+    userInfo.fullName.trim() !== "" &&
+    userInfo.email.trim() !== "" &&
+    userInfo.phone.trim() !== "" &&
+    userInfo.address.trim() !== "" &&
+    userInfo.city.trim() !== "" &&
+    userInfo.state.trim() !== "" &&
     isEmailValid &&
     isPhoneValid;
 
-
   const showError = (field) =>
     submitted || touched[field];
-
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -104,25 +113,20 @@ export default function CheckoutPage() {
     setSubmitted(true);
 
     setTouched({
-      fullName: true,
       phone: true,
-      email: true,
       address: true,
       city: true,
       state: true,
     });
 
-
     if (!isFormValid) {
       return;
     }
-
 
     setCustomer(userInfo);
 
     navigate("/payment");
   }
-
 
   return (
     <div className="checkout-page">
@@ -135,13 +139,11 @@ export default function CheckoutPage() {
         </p>
       </header>
 
-
       <div className="checkout-layout">
 
         <section className="checkout-card card">
 
           <h2>Delivery details</h2>
-
 
           <form
             id="checkout-form"
@@ -155,38 +157,21 @@ export default function CheckoutPage() {
               {/* Full name */}
 
               <label>
-
                 Full name
 
                 <input
                   type="text"
                   name="fullName"
                   value={userInfo.fullName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  readOnly
                   autoComplete="name"
-                  className={
-                    showError("fullName") &&
-                    isFieldEmpty("fullName")
-                      ? "input-error"
-                      : ""
-                  }
                 />
-
-                {showError("fullName") &&
-                  isFieldEmpty("fullName") && (
-                    <small className="field-error">
-                      Please enter your full name.
-                    </small>
-                  )}
-
               </label>
 
 
               {/* Phone */}
 
               <label>
-
                 Phone number
 
                 <input
@@ -221,56 +206,27 @@ export default function CheckoutPage() {
                       Please enter a valid Nigerian phone number.
                     </small>
                   )}
-
               </label>
 
 
               {/* Email */}
 
               <label>
-
                 Email
 
                 <input
                   type="email"
                   name="email"
                   value={userInfo.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  readOnly
                   autoComplete="email"
-                  className={
-                    showError("email") &&
-                    (
-                      !userInfo.email.trim() ||
-                      !isEmailValid
-                    )
-                      ? "input-error"
-                      : ""
-                  }
                 />
-
-                {showError("email") &&
-                  !userInfo.email.trim() && (
-                    <small className="field-error">
-                      Please enter your email address.
-                    </small>
-                  )}
-
-                {showError("email") &&
-                  userInfo.email.trim() &&
-                  !isEmailValid && (
-                    <small className="field-error">
-                      Please enter a valid email address.
-                    </small>
-                  )}
-
               </label>
 
 
               {/* Address */}
 
               <label className="full-width">
-
                 Address
 
                 <input
@@ -294,14 +250,12 @@ export default function CheckoutPage() {
                       Please enter your address.
                     </small>
                   )}
-
               </label>
 
 
               {/* City */}
 
               <label>
-
                 City
 
                 <input
@@ -325,14 +279,12 @@ export default function CheckoutPage() {
                       Please enter your city.
                     </small>
                   )}
-
               </label>
 
 
               {/* State */}
 
               <label>
-
                 State
 
                 <input
@@ -356,7 +308,6 @@ export default function CheckoutPage() {
                       Please enter your state.
                     </small>
                   )}
-
               </label>
 
             </div>
@@ -369,7 +320,6 @@ export default function CheckoutPage() {
         <aside className="checkout-summary card">
 
           <h2>Order summary</h2>
-
 
           {items.map((item) => (
             <div

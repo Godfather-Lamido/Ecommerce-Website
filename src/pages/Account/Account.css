@@ -9,6 +9,15 @@
   max-width: 720px;
 }
 
+
+.account-logout {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+
 .section-label {
   display: inline-block;
   margin-bottom: 10px;

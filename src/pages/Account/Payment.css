@@ -1,0 +1,35 @@
+
+.payment-notice {
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px solid #e2c98a;
+  border-radius: 8px;
+}
+
+.payment-notice p {
+  margin: 8px 0 0;
+}
+
+.payment-item-list {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 20px 0;
+  list-style: none;
+}
+
+.payment-item-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.payment-empty {
+  display: grid;
+  gap: 12px;
+}
+
+.payment-summary form {
+  margin-top: 20px;
+}

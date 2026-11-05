@@ -96,6 +96,7 @@
   font-size: 1.08rem;
   line-height: 1.45;
   letter-spacing: -0.02em;
+  min-height: 3.132em;
 }
 
 .product-rating {

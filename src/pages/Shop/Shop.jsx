@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/product/ProductCard/ProductCard';
-import ProductLoadMore from '../../components/product/ProductLoadMore';
 import { useProducts } from '../../context/ProductContext';
 import ReactPaginate from 'react-paginate';
 import './Shop.css';
@@ -11,63 +10,109 @@ export default function ShopPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const sortBy = searchParams.get('sort') ?? 'featured';
+
   const {
     products,
     categories,
     isLoading,
-    // isLoadingMore,
     error,
-    // loadMoreError,
-    // hasMore,
-    // loadMore,
     reload,
   } = useProducts();
-    const [ pageNumber, setPageNumber ] = useState(0)
+
+  const [pageNumber, setPageNumber] = useState(0);
 
   useEffect(() => {
     if (location.hash === '#categories') {
-      document.getElementById('categories')?.scrollIntoView({ block: 'start' });
+      document.getElementById('categories')?.scrollIntoView({
+        block: 'start',
+      });
     }
   }, [location.hash, categories.length]);
 
-  const activeCategory = categories.find((category) => category.slug === categorySlug) ?? null;
+  // Reset pagination when the category or sorting option changes.
+  useEffect(() => {
+    setPageNumber(0);
+  }, [categorySlug, sortBy]);
+
+  const activeCategory =
+    categories.find((category) => category.slug === categorySlug) ?? null;
+
   const filteredProducts = useMemo(() => {
     const filtered = categorySlug
       ? products.filter((product) => product.categoryId === categorySlug)
       : [...products];
 
-    if (sortBy === 'price-low') return filtered.sort((a, b) => a.price - b.price);
-    if (sortBy === 'price-high') return filtered.sort((a, b) => b.price - a.price);
-    if (sortBy === 'popular') return filtered.sort((a, b) => b.reviewCount - a.reviewCount);
+    if (sortBy === 'price-low') {
+      return filtered.sort((a, b) => a.price - b.price);
+    }
+
+    if (sortBy === 'price-high') {
+      return filtered.sort((a, b) => b.price - a.price);
+    }
+
+    if (sortBy === 'popular') {
+      return filtered.sort((a, b) => b.reviewCount - a.reviewCount);
+    }
+
     return filtered.sort((a, b) => b.rating - a.rating);
   }, [categorySlug, products, sortBy]);
 
-  const productsPerPage = 10
+  const productsPerPage = 10;
   const pageVisited = pageNumber * productsPerPage;
+
   const displayProducts = filteredProducts.slice(
-    pageVisited, 
+    pageVisited,
     pageVisited + productsPerPage
   );
 
-  const pageCount = Math.ceil(filteredProducts.length / productsPerPage);
+  const pageCount = Math.ceil(
+    filteredProducts.length / productsPerPage
+  );
 
   const changePage = ({ selected }) => {
-  setPageNumber(selected);
-};
+    setPageNumber(selected);
+  };
 
   const handleSortChange = (event) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (event.target.value === 'featured') nextParams.delete('sort');
-    else nextParams.set('sort', event.target.value);
+
+    if (event.target.value === 'featured') {
+      nextParams.delete('sort');
+    } else {
+      nextParams.set('sort', event.target.value);
+    }
+
     setSearchParams(nextParams);
   };
 
+  const handleCategoryChange = (event) => {
+    const value = event.target.value;
+
+    if (value === '') {
+      navigate('/shop');
+      return;
+    }
+
+    const categorySelected = categories.find(
+      (item) => item.slug === value
+    );
+
+    if (categorySelected) {
+      navigate(`/category/${categorySelected.slug}`);
+    }
+  };
 
   return (
     <div className="shop-page">
       <header className="page-header">
-        <h1>{activeCategory ? activeCategory.name : 'Shop all products'}</h1>
+        <h1>
+          {activeCategory
+            ? activeCategory.name
+            : 'Shop all products'}
+        </h1>
+
         <p>
           {activeCategory
             ? `Explore products in ${activeCategory.name.toLowerCase()}.`
@@ -79,25 +124,9 @@ export default function ShopPage() {
         <label htmlFor="category-select">Category</label>
 
         <select
-          id='category-select'
+          id="category-select"
           value={categorySlug ?? ''}
-          onChange={(event) => {
-            const value = event.target.value;
-
-            console.log("cateogry selected: ", value)
-
-            console.log("Categories :", categories)
-
-            const cateogorySelected = categories.find((item) => item.slug === value);
-
-            console.log("category object: ", cateogorySelected)
-
-            if (value === '') {
-              navigate('/shop');
-            } else {
-              navigate(`/category/${cateogorySelected.slug}`);
-            }
-          }}
+          onChange={handleCategoryChange}
         >
           <option value="">All products</option>
 
@@ -107,29 +136,18 @@ export default function ShopPage() {
             </option>
           ))}
         </select>
-      </div> 
- 
-      {/* <div id="categories" className="shop-filters" aria-label="Product categories">
-        <Link to="/shop" className={categorySlug ? 'filter-pill' : 'filter-pill active'}>
-          All products
-        </Link>
-        {categories.map((category) => (
-          <Link
-            key={category.slug}
-            to={`/category/${category.slug}`}
-            className={categorySlug === category.slug ? 'filter-pill active' : 'filter-pill'}
-          >
-            {category.name}
-          </Link>
-        ))}
-      </div>  */}
+      </div>
 
       <div className="search-toolbar">
         <div className="search-summary">
-          {isLoading ? 'Loading products…' : `${filteredProducts.length} product${filteredProducts.length === 1 ? '' : 's'} loaded`}
+          {isLoading
+            ? 'Loading products…'
+            : `${filteredProducts.length} product${filteredProducts.length === 1 ? '' : 's'} loaded`}
         </div>
+
         <label className="sort-control">
           <span>Sort by</span>
+
           <select value={sortBy} onChange={handleSortChange}>
             <option value="featured">Top rated</option>
             <option value="popular">Most reviewed</option>
@@ -143,40 +161,54 @@ export default function ShopPage() {
         <div className="empty-state-card" role="alert">
           <h2>We couldn’t load the catalog.</h2>
           <p>{error}</p>
-          <button type="button" className="primary-btn" onClick={reload}>Try again</button>
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={reload}
+          >
+            Try again
+          </button>
         </div>
       ) : filteredProducts.length ? (
-        <div className="product-grid">
-          {displayProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <>
+          <div className="product-grid">
+            {displayProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
 
+          {pageCount > 1 && !isLoading && (
+            <ReactPaginate
+              previousLabel="Previous"
+              nextLabel="Next"
+              breakLabel="..."
+              pageCount={pageCount}
+              onPageChange={changePage}
+              forcePage={Math.min(pageNumber, pageCount - 1)}
+              pageRangeDisplayed={3}
+              marginPagesDisplayed={1}
+              containerClassName="paginationBtnns"
+              pageClassName="pagination-page"
+              pageLinkClassName="pagination-link"
+              previousClassName="pagination-previous"
+              previousLinkClassName="pagination-link"
+              nextClassName="pagination-next"
+              nextLinkClassName="pagination-link"
+              breakClassName="pagination-break"
+              breakLinkClassName="pagination-link"
+              disabledClassName="pagination-disabled"
+              activeClassName="pagination-active"
+            />
+          )}
+        </>
       ) : !isLoading ? (
         <div className="empty-state-card">
           <h2>No products in this category yet.</h2>
-          <Link to="/shop" className="primary-btn">Browse all products</Link>
+          <Link to="/shop" className="primary-btn">
+            Browse all products
+          </Link>
         </div>
       ) : null}
-
-        <ReactPaginate
-          previousLabel={"Previous"}
-          nextLabel={"Next"}
-          pageCount={pageCount}
-          onPageChange={changePage}
-          containerClassName={"paginationBtnns"}
-          previousLinkClassName="pagination-link"
-          nextLinkClassName="pagination-link"
-          disabledClassName={"pagination-disabled"}
-          activeClassName="pagination-active"
-        />
-
-      {/* <ProductLoadMore
-        hasMore={hasMore}
-        isLoading={isLoadingMore}
-        error={loadMoreError}
-        onLoadMore={loadMore}
-      /> */}
     </div>
   );
 }
